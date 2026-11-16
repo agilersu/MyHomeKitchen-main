@@ -1,0 +1,77 @@
+<view class="container">
+  <view class="card hero">
+    <view class="hero-title">🎲 解决“今天吃什么”难题</view>
+    <view class="text-muted">从「{{kitchen.name}}」菜单中为你随机搭配今日一餐</view>
+
+    <!-- 菜品数量选择 -->
+    <view class="field-block">
+      <text class="form-label">想吃几道菜？</text>
+      <view class="count-row">
+        <view
+          wx:for="{{[1, 2, 3, 4]}}"
+          wx:key="*this"
+          class="count-chip {{pickCount === item ? 'active' : ''}}"
+          data-count="{{item}}"
+          bindtap="selectCount"
+        >
+          {{item}} 道菜
+        </view>
+      </view>
+    </view>
+
+    <!-- 参与抽签的分类 -->
+    <view class="field-block">
+      <text class="form-label">限定分类（可选）</text>
+      <view class="cat-chips">
+        <view
+          class="cat-chip {{selectedCategoryId === 'all' ? 'active' : ''}}"
+          data-id="all"
+          bindtap="selectCategory"
+        >
+          全部分类
+        </view>
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="cat-chip {{selectedCategoryId === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="selectCategory"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-primary spin-btn" style="background: {{kitchen.theme.gradient}};" bindtap="rollDishes">
+      {{isRolling ? '🎲 正在摇菜中...' : '✨ 开始随机摇菜'}}
+    </view>
+  </view>
+
+  <!-- 抽签结果 -->
+  <view wx:if="{{pickedDishes.length > 0}}" class="card">
+    <view class="row-between" style="margin-bottom: 16rpx;">
+      <text class="section-title" style="margin-bottom: 0;">🍽️ 今日推荐组合</text>
+      <text class="text-muted">共 {{pickedDishes.length}} 道</text>
+    </view>
+
+    <view wx:for="{{pickedDishes}}" wx:key="id" class="picked-row row-between">
+      <view class="row-center flex-1" data-id="{{item.id}}" bindtap="openDetail">
+        <view class="picked-thumb" style="background: {{item.coverBg}};">
+          <text style="font-size: 46rpx;">{{item.emoji}}</text>
+        </view>
+        <view class="flex-1">
+          <view class="picked-name">{{item.name}}</view>
+          <view class="text-muted">⏱ {{item.cookTime}}分 · {{item.stock.ratioText}}</view>
+        </view>
+      </view>
+      <view class="swap-btn" data-index="{{index}}" bindtap="swapOne">换一道</view>
+    </view>
+
+    <view class="row-between" style="margin-top: 24rpx; gap: 18rpx;">
+      <view class="btn-secondary flex-1" bindtap="rollDishes">再抽一组</view>
+      <view class="btn-primary flex-1" style="background: {{kitchen.theme.gradient}};" bindtap="addAllToCart">
+        全部加入菜篮
+      </view>
+    </view>
+  </view>
+</view>

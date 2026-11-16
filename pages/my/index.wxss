@@ -1,0 +1,162 @@
+.profile-card {
+  padding: 28rpx;
+}
+
+.avatar {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  margin-right: 22rpx;
+  background-color: #F3F4F6;
+  flex-shrink: 0;
+}
+
+.nick-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  min-width: 0;
+}
+
+.role-badge {
+  margin-left: 14rpx;
+  background-color: #FFF0E8;
+  color: #FF6B35;
+  font-size: 22rpx;
+  font-weight: 600;
+  padding: 4rpx 16rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+.edit-hint {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.local-banner {
+  margin-top: 20rpx;
+  background-color: #F0FDF4;
+  color: #166534;
+  font-size: 22rpx;
+  padding: 12rpx 18rpx;
+  border-radius: 14rpx;
+}
+
+.title-icon {
+  width: 34rpx;
+  height: 34rpx;
+  margin-right: 12rpx;
+}
+
+.stat-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 12rpx;
+}
+
+.stat-cell {
+  flex: 1;
+  background-color: #F7F6F2;
+  border-radius: 18rpx;
+  padding: 18rpx 8rpx;
+  text-align: center;
+}
+
+.stat-val {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #2B2D42;
+}
+
+.top-block {
+  margin-top: 22rpx;
+  padding-top: 18rpx;
+  border-top: 1rpx dashed #EFECE6;
+}
+
+.top-title {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #4B5563;
+  margin-bottom: 10rpx;
+}
+
+.top-row {
+  padding: 10rpx 0;
+  font-size: 26rpx;
+}
+
+.top-row .badge {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.menu-item {
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F3F4F6;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.sync-btn-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+}
+
+.sync-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  border-radius: 18rpx;
+  background-color: #F7F6F2;
+  color: #2B2D42;
+  font-size: 26rpx;
+  font-weight: 600;
+  gap: 10rpx;
+}
+
+.sync-btn.primary {
+  background-color: #FFF0E8;
+  color: #FF6B35;
+}
+
+.sync-btn.danger {
+  background-color: #FFECEB;
+  color: #E5484D;
+}
+
+.sync-icon {
+  width: 28rpx;
+  height: 28rpx;
+}
+
+.field-group {
+  margin-bottom: 18rpx;
+}
+
+.role-pick {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx;
+  border-radius: 16rpx;
+  background-color: #F3F4F6;
+  font-size: 24rpx;
+  border: 2rpx solid transparent;
+}
+
+.role-pick.active {
+  background-color: #FFF0E8;
+  color: #FF6B35;
+  font-weight: 700;
+  border: 2rpx solid #FF6B35;
+}
+
+.paste-clip-btn {
+  font-size: 24rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}

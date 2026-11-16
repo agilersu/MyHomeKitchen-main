@@ -1,0 +1,159 @@
+.fridge-hero {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F2FBF7 100%);
+}
+
+.fridge-hero .btn-primary {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.hero-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+}
+
+.stat-strip {
+  margin-top: 24rpx;
+  gap: 14rpx;
+}
+
+.stat-box {
+  flex: 1;
+  background-color: #FFFFFF;
+  border-radius: 18rpx;
+  padding: 16rpx 10rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.03);
+}
+
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #2B2D42;
+}
+
+.zone-scroll {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+
+.zone-row {
+  display: inline-flex;
+  gap: 14rpx;
+  padding: 4rpx 0;
+}
+
+.zone-pill {
+  padding: 12rpx 24rpx;
+  border-radius: 999rpx;
+  background-color: #FFFFFF;
+  color: #4B5563;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.zone-pill.active {
+  background-color: #2B2D42;
+  color: #FFFFFF;
+}
+
+.filter-tip {
+  background-color: #FFF5E5;
+  color: #B45309;
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.reset-filter {
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.item-card {
+  padding: 22rpx;
+}
+
+.zone-emoji {
+  font-size: 44rpx;
+  margin-right: 18rpx;
+  flex-shrink: 0;
+}
+
+.item-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  min-width: 0;
+}
+
+.item-card .badge {
+  flex-shrink: 0;
+}
+
+.qty-box {
+  gap: 12rpx;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+.qty-btn {
+  width: 46rpx;
+  height: 46rpx;
+  line-height: 44rpx;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #F3F4F6;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.qty-btn.plus {
+  background-color: #FF6B35;
+  color: #FFFFFF;
+}
+
+.qty-text {
+  min-width: 72rpx;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.item-foot {
+  margin-top: 14rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx dashed #F0F1F5;
+}
+
+.del-link {
+  font-size: 24rpx;
+  color: #EF4444;
+}
+
+.field-group {
+  margin-bottom: 18rpx;
+}
+
+.zone-pick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.zone-pick-chip {
+  padding: 10rpx 20rpx;
+  border-radius: 14rpx;
+  background-color: #F3F4F6;
+  font-size: 24rpx;
+  color: #4B5563;
+  border: 2rpx solid transparent;
+}
+
+.zone-pick-chip.active {
+  background-color: #FFF0E8;
+  color: #FF6B35;
+  font-weight: 700;
+  border: 2rpx solid #FF6B35;
+}

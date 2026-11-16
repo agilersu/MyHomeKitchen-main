@@ -1,0 +1,168 @@
+<view class="container">
+  <!-- 身份名片（纯本地） -->
+  <view class="card profile-card" bindtap="openProfileModal">
+    <view class="row-between">
+      <view class="row-center flex-1">
+        <image class="avatar" src="{{profile.avatar || '/static/default_avatar.jpg'}}" mode="aspectFill" />
+        <view class="flex-1">
+          <view class="row-center">
+            <text class="nick-name text-ellipsis">{{profile.nickName}}</text>
+            <text class="role-badge">{{profile.role === 'chef' ? '👨‍🍳 厨神' : '😋 吃货'}}</text>
+          </view>
+          <view class="text-muted" style="margin-top: 6rpx;">{{profile.signature}}</view>
+        </view>
+      </view>
+      <text class="edit-hint">编辑 ▸</text>
+    </view>
+    <view class="local-banner">
+      🔒 纯本地离线运行版 · 无登录、无支付、无广告、数据仅保存在本机
+    </view>
+  </view>
+
+  <!-- 厨房统计看板 -->
+  <view class="card">
+    <view class="row-between" style="margin-bottom: 18rpx;">
+      <view class="row-center">
+        <image class="title-icon" src="/static/chart.svg" mode="aspectFit" />
+        <text class="section-title" style="margin-bottom: 0;">家庭厨房统计</text>
+      </view>
+      <text class="text-muted">{{stats.kitchenCount}} 个厨房</text>
+    </view>
+    <view class="stat-grid">
+      <view class="stat-cell">
+        <view class="stat-val">{{stats.recipeCount}}</view>
+        <view class="text-muted">私房菜谱</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-val">{{stats.totalCookCount}}</view>
+        <view class="text-muted">累计下厨</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-val">{{stats.fridgeCount}}</view>
+        <view class="text-muted">冰箱食材</view>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-val" style="color: {{stats.soonOrExpiredCount > 0 ? '#E68A00' : '#22A06B'}};">{{stats.soonOrExpiredCount}}</view>
+        <view class="text-muted">临期预警</view>
+      </view>
+    </view>
+
+    <view wx:if="{{stats.topRecipes.length > 0}}" class="top-block">
+      <view class="top-title">🏆 最受欢迎拿手菜 Top 3</view>
+      <view
+        wx:for="{{stats.topRecipes}}"
+        wx:key="id"
+        class="top-row row-between"
+        data-id="{{item.id}}"
+        bindtap="openRecipeDetail"
+      >
+        <text class="text-ellipsis">{{index + 1}}. {{item.emoji}} {{item.name}}</text>
+        <text class="badge badge-primary">做过 {{item.cookCount || 0}} 次</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 厨房实用工具箱 -->
+  <view class="card">
+    <view class="section-title">🧰 实用工具箱</view>
+    <view class="menu-item row-between" bindtap="goTimers">
+      <text>⏱ 多路做菜计时器</text>
+      <text class="text-muted">同时计多个菜 ›</text>
+    </view>
+    <view class="menu-item row-between" bindtap="goCategoryManage">
+      <text>🏠 多厨房切换与分类管理</text>
+      <text class="text-muted">主题 / 公告 / 分类 ›</text>
+    </view>
+    <view class="menu-item row-between" bindtap="goMealPlan">
+      <text>📅 三餐饮食计划日历</text>
+      <text class="text-muted">提前排菜谱 ›</text>
+    </view>
+    <view class="menu-item row-between" style="border-bottom: none;" bindtap="goShopping">
+      <text>🛒 去买菜智能清单</text>
+      <text class="text-muted">自动对比冰箱库存 ›</text>
+    </view>
+  </view>
+
+  <!-- 家庭协同与数据备份 -->
+  <view class="card">
+    <view class="section-title">📲 家庭共享与本地备份（无服务器同步）</view>
+    <view class="text-muted" style="margin-bottom: 18rpx;">
+      将当前厨房菜单导出为口令发给微信好友/家人，对方复制后在此点击导入即可同步菜单。
+    </view>
+    <view class="sync-btn-grid">
+      <view class="sync-btn" bindtap="exportCurrentKitchen">
+        <image class="sync-icon" src="/static/copy.svg" mode="aspectFit" />
+        <text>复制当前厨房菜单口令</text>
+      </view>
+      <view class="sync-btn" bindtap="exportFullBackup">
+        <text>💾 复制全量备份 JSON</text>
+      </view>
+      <view class="sync-btn primary" bindtap="openImportModal">
+        <text>📥 粘贴导入菜单 / 备份</text>
+      </view>
+      <view class="sync-btn danger" bindtap="onResetDemo">
+        <text>🔄 恢复初始示例数据</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑身份弹窗 -->
+  <view wx:if="{{showProfileModal}}" class="modal-mask center" bindtap="closeProfileModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="section-title">编辑我的厨房身份</view>
+      <view class="field-group">
+        <text class="form-label">昵称</text>
+        <input class="form-input" value="{{profileForm.nickName}}" data-field="nickName" bindinput="onProfileInput" />
+      </view>
+      <view class="field-group">
+        <text class="form-label">当前角色</text>
+        <view class="row-center" style="gap: 16rpx;">
+          <view
+            class="role-pick {{profileForm.role === 'chef' ? 'active' : ''}}"
+            data-role="chef"
+            bindtap="selectRole"
+          >
+            👨‍🍳 厨神（掌勺）
+          </view>
+          <view
+            class="role-pick {{profileForm.role === 'foodie' ? 'active' : ''}}"
+            data-role="foodie"
+            bindtap="selectRole"
+          >
+            😋 吃货（点单）
+          </view>
+        </view>
+      </view>
+      <view class="field-group">
+        <text class="form-label">厨房签名</text>
+        <input class="form-input" value="{{profileForm.signature}}" data-field="signature" bindinput="onProfileInput" />
+      </view>
+      <view class="row-between" style="margin-top: 28rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeProfileModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="saveProfileForm">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导入 JSON 弹窗 -->
+  <view wx:if="{{showImportModal}}" class="modal-mask center" bindtap="closeImportModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="row-between" style="margin-bottom: 14rpx;">
+        <text class="section-title" style="margin-bottom: 0;">导入菜单 / 备份</text>
+        <text class="paste-clip-btn" bindtap="pasteFromClipboard">从剪贴板读取</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        style="min-height: 260rpx;"
+        placeholder="请粘贴家人发来的厨房菜单 JSON 口令，或全量备份 JSON"
+        value="{{importText}}"
+        bindinput="onImportInput"
+        maxlength="-1"
+      />
+      <view class="row-between" style="margin-top: 24rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeImportModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="confirmImport">确认导入</view>
+      </view>
+    </view>
+  </view>
+</view>

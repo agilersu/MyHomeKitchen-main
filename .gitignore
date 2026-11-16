@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+project.private.config.json
+wx7145b9f93bf9c726/
+*.wxapkg

@@ -1,0 +1,93 @@
+.hero-title {
+  font-size: 34rpx;
+  font-weight: 800;
+  margin-bottom: 6rpx;
+}
+
+.hero-actions .btn-primary,
+.hero-actions .btn-secondary {
+  font-size: 25rpx;
+  padding: 18rpx 16rpx;
+  white-space: nowrap;
+}
+
+.select-all-row {
+  margin-top: 18rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx dashed #EFECE6;
+}
+
+.select-all-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #2B2D42;
+}
+
+.form-input {
+  min-width: 0;
+  width: auto;
+}
+
+.add-btn {
+  background-color: #2B2D42;
+  color: #FFFFFF;
+  font-size: 25rpx;
+  font-weight: 600;
+  padding: 20rpx 26rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.shop-row {
+  padding: 18rpx 0;
+  border-bottom: 1rpx dashed #EFECE6;
+  gap: 16rpx;
+}
+
+.shop-row .flex-1 {
+  min-width: 0;
+}
+
+.shop-row .badge {
+  flex-shrink: 0;
+}
+
+.shop-row:last-child {
+  border-bottom: none;
+}
+
+.check-box {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 12rpx;
+  border: 3rpx solid #D1D5DB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18rpx;
+  font-size: 24rpx;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.check-box.checked {
+  background-color: #22A06B;
+  border-color: #22A06B;
+}
+
+.shop-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.shop-name.done {
+  text-decoration: line-through;
+  color: #9CA3AF;
+}
+
+.del-btn {
+  font-size: 24rpx;
+  color: #EF4444;
+  padding: 8rpx 14rpx;
+  flex-shrink: 0;
+}

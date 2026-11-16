@@ -1,0 +1,84 @@
+<view class="container">
+  <!-- 7天横向日历条 -->
+  <view class="card cal-card">
+    <view class="row-between" style="margin-bottom: 14rpx;">
+      <text class="section-title" style="margin-bottom: 0;">📅 未来 7 天排餐日历</text>
+      <text class="text-muted">{{selectedDate}}</text>
+    </view>
+    <scroll-view scroll-x="true" style="white-space: nowrap;">
+      <view class="day-strip">
+        <view
+          wx:for="{{weekDays}}"
+          wx:key="date"
+          class="day-pill {{selectedDate === item.date ? 'active' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="selectDate"
+        >
+          <text class="day-week">{{item.weekLabel}}</text>
+          <text class="day-num">{{item.dayNum}}</text>
+          <view wx:if="{{item.hasPlan}}" class="day-dot"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 四个餐次卡片 -->
+  <view wx:for="{{mealSections}}" wx:key="id" class="card meal-card">
+    <view class="row-between meal-header">
+      <view class="row-center">
+        <image class="meal-svg" src="{{item.icon}}" mode="aspectFit" />
+        <text class="meal-title">{{item.name}}</text>
+        <text class="text-muted" style="margin-left: 10rpx;">({{item.dishes.length}}道)</text>
+      </view>
+      <view class="add-dish-btn" data-meal="{{item.id}}" bindtap="openPickerModal">+ 安排菜品</view>
+    </view>
+
+    <view wx:if="{{item.dishes.length === 0}}" class="meal-empty">
+      尚未排菜，点击右上角「+ 安排菜品」
+    </view>
+
+    <view wx:for="{{item.dishes}}" wx:for-item="dish" wx:for-index="dIdx" wx:key="dIdx" class="plan-dish row-between">
+      <view class="row-center flex-1" data-id="{{dish.id}}" bindtap="openRecipeDetail">
+        <text class="dish-emoji">{{dish.emoji}}</text>
+        <view class="flex-1">
+          <view class="dish-name">{{dish.name}}</view>
+          <view class="text-muted">⏱ {{dish.cookTime}}分</view>
+        </view>
+      </view>
+      <text class="rm-dish" data-meal="{{item.id}}" data-idx="{{dIdx}}" bindtap="onRemoveDish">移除</text>
+    </view>
+  </view>
+
+  <!-- 底部一键转待做订单 -->
+  <view class="btn-primary" bindtap="onConvertOrder">
+    🚀 将 {{selectedDate}} 计划一键生成待做订单
+  </view>
+
+  <!-- 菜谱选择弹窗 -->
+  <view wx:if="{{showPickerModal}}" class="modal-mask" bindtap="closePickerModal">
+    <view class="modal-sheet" catchtap="noop">
+      <view class="row-between" style="margin-bottom: 18rpx;">
+        <text class="section-title" style="margin-bottom: 0;">选择菜谱添加到餐次</text>
+        <text class="text-muted" bindtap="closePickerModal">关闭</text>
+      </view>
+      <scroll-view scroll-y="true" style="max-height: 60vh;">
+        <view
+          wx:for="{{allRecipes}}"
+          wx:key="id"
+          class="pick-recipe-row row-between"
+          data-id="{{item.id}}"
+          bindtap="onPickRecipe"
+        >
+          <view class="row-center flex-1">
+            <text style="font-size: 38rpx; margin-right: 16rpx; flex-shrink: 0;">{{item.emoji}}</text>
+            <view class="flex-1">
+              <view class="dish-name text-ellipsis">{{item.name}}</view>
+              <view class="text-muted">⏱ {{item.cookTime}}分</view>
+            </view>
+          </view>
+          <text class="badge badge-primary">+ 添加</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

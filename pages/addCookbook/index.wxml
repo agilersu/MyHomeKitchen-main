@@ -1,0 +1,167 @@
+<view class="container">
+  <!-- 模式切换：手动填写 vs 文本智能导入 -->
+  <view wx:if="{{!editId}}" class="seg-tabs row-between">
+    <view class="seg-tab {{mode === 'form' ? 'active' : ''}}" data-mode="form" bindtap="switchMode">
+      ✏️ 手动录入菜谱
+    </view>
+    <view class="seg-tab {{mode === 'parse' ? 'active' : ''}}" data-mode="parse" bindtap="switchMode">
+      ✨ 粘贴小红书/下厨房导入
+    </view>
+  </view>
+
+  <!-- 文本智能导入模式 -->
+  <view wx:if="{{mode === 'parse'}}" class="card">
+    <view class="row-between" style="margin-bottom: 12rpx;">
+      <text class="section-title" style="margin-bottom: 0;">粘贴菜谱全文自动解析</text>
+      <text class="demo-fill-btn" bindtap="fillDemoText">填入示例</text>
+    </view>
+    <view class="text-muted" style="margin-bottom: 16rpx;">
+      支持直接粘贴小红书、下厨房或朋友圈复制的菜谱文字，自动提取菜名、食材与步骤。
+    </view>
+    <textarea
+      class="form-textarea"
+      style="min-height: 360rpx;"
+      placeholder="示例：\n糖醋排骨\n【用料】\n猪肋排 500克\n冰糖 30克\n香醋 3勺\n【步骤】\n1. 排骨冷水下锅焯水捞出。\n2. 炒糖色下排骨翻炒，焖煮25分钟收汁。"
+      value="{{rawImportText}}"
+      bindinput="onRawTextInput"
+      maxlength="-1"
+    />
+    <view class="btn-primary" style="margin-top: 24rpx;" bindtap="parseAndFillForm">
+      ⚡ 一键识别并填充到表单
+    </view>
+  </view>
+
+  <!-- 菜谱表单 -->
+  <view wx:if="{{mode === 'form'}}">
+    <view class="card">
+      <view class="row-between" style="margin-bottom: 20rpx;">
+        <view class="cover-picker" bindtap="chooseCover">
+          <image wx:if="{{form.coverImage}}" class="cover-preview" src="{{form.coverImage}}" mode="aspectFill" />
+          <view wx:else class="cover-empty">
+            <text style="font-size: 56rpx;">{{form.emoji}}</text>
+            <text class="text-muted" style="font-size: 20rpx;">点击选图</text>
+          </view>
+        </view>
+        <view class="flex-1" style="margin-left: 20rpx;">
+          <text class="form-label">菜品名称 *</text>
+          <input class="form-input" placeholder="如：糖醋排骨" value="{{form.name}}" data-field="name" bindinput="onFieldInput" />
+          <view class="emoji-row row-center">
+            <text
+              wx:for="{{emojiOptions}}"
+              wx:key="*this"
+              class="emoji-opt {{form.emoji === item ? 'active' : ''}}"
+              data-emoji="{{item}}"
+              bindtap="selectEmoji"
+            >{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">一句话介绍</text>
+        <input class="form-input" placeholder="如：外酥里嫩、酸甜开胃" value="{{form.description}}" data-field="description" bindinput="onFieldInput" />
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">所属分类</text>
+        <scroll-view scroll-x="true" style="white-space: nowrap;">
+          <view class="chip-row">
+            <view
+              wx:for="{{categories}}"
+              wx:key="id"
+              class="pick-chip {{form.categoryId === item.id ? 'active' : ''}}"
+              data-id="{{item.id}}"
+              bindtap="selectCategory"
+            >
+              {{item.name}}
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="row-between field-group" style="gap: 16rpx;">
+        <view class="flex-1">
+          <text class="form-label">预计耗时 (分钟)</text>
+          <input class="form-input" type="number" value="{{form.cookTime}}" data-field="cookTime" bindinput="onFieldInput" />
+        </view>
+        <view class="flex-1">
+          <text class="form-label">烹饪难度</text>
+          <view class="row-center" style="gap: 10rpx; margin-top: 6rpx;">
+            <view
+              wx:for="{{difficulties}}"
+              wx:key="*this"
+              class="diff-chip {{form.difficulty === item ? 'active' : ''}}"
+              data-diff="{{item}}"
+              bindtap="selectDifficulty"
+            >{{item}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">可选口味/规格（逗号分隔）</text>
+        <input class="form-input" placeholder="如：原味, 微辣, 少油" value="{{specsText}}" bindinput="onSpecsInput" />
+      </view>
+    </view>
+
+    <!-- 食材列表 -->
+    <view class="card">
+      <view class="row-between" style="margin-bottom: 16rpx;">
+        <text class="section-title" style="margin-bottom: 0;">🥬 用料明细</text>
+        <text class="add-row-btn" bindtap="addIngredientRow">+ 添加食材</text>
+      </view>
+      <view wx:for="{{form.ingredients}}" wx:key="index" class="ing-edit-row row-center">
+        <input
+          class="form-input ing-name-in"
+          placeholder="食材名"
+          value="{{item.name}}"
+          data-idx="{{index}}"
+          data-key="name"
+          bindinput="onIngInput"
+        />
+        <input
+          class="form-input ing-amt-in"
+          type="digit"
+          placeholder="数量"
+          value="{{item.amount}}"
+          data-idx="{{index}}"
+          data-key="amount"
+          bindinput="onIngInput"
+        />
+        <input
+          class="form-input ing-unit-in"
+          placeholder="单位"
+          value="{{item.unit}}"
+          data-idx="{{index}}"
+          data-key="unit"
+          bindinput="onIngInput"
+        />
+        <text class="rm-btn" data-idx="{{index}}" bindtap="removeIngredientRow">✕</text>
+      </view>
+    </view>
+
+    <!-- 做法步骤 -->
+    <view class="card">
+      <view class="row-between" style="margin-bottom: 16rpx;">
+        <text class="section-title" style="margin-bottom: 0;">👩‍🍳 烹饪步骤</text>
+        <text class="add-row-btn" bindtap="addStepRow">+ 添加步骤</text>
+      </view>
+      <view wx:for="{{form.steps}}" wx:key="index" class="step-edit-row">
+        <view class="row-between" style="margin-bottom: 8rpx;">
+          <text class="step-idx">第 {{index + 1}} 步</text>
+          <text class="rm-btn" data-idx="{{index}}" bindtap="removeStepRow">删除</text>
+        </view>
+        <textarea
+          class="form-textarea"
+          style="min-height: 110rpx;"
+          placeholder="描述具体做法和火候（写明“X分钟”可在详情页一键计时）"
+          value="{{item}}"
+          data-idx="{{index}}"
+          bindinput="onStepInput"
+        />
+      </view>
+    </view>
+
+    <view class="btn-primary" bindtap="saveRecipeForm">保存菜谱到当前厨房</view>
+  </view>
+</view>

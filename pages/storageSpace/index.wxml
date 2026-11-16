@@ -1,0 +1,148 @@
+<view class="container">
+  <!-- 冰箱库存总览 -->
+  <view class="card fridge-hero">
+    <view class="row-between">
+      <view class="flex-1">
+        <view class="hero-title">🧊 厨房冰箱与储物</view>
+        <view class="text-muted">按保质期排序，优先消耗临期食材避免浪费</view>
+      </view>
+      <view class="btn-primary" bindtap="openAddModal">+ 入库食材</view>
+    </view>
+
+    <view class="stat-strip row-between">
+      <view class="stat-box" data-status="all" bindtap="selectStatusFilter">
+        <view class="stat-num">{{totalCount}}</view>
+        <view class="text-muted">全部库存</view>
+      </view>
+      <view class="stat-box warn" data-status="soon" bindtap="selectStatusFilter">
+        <view class="stat-num" style="color:#E68A00;">{{soonCount}}</view>
+        <view class="text-muted">3天内临期</view>
+      </view>
+      <view class="stat-box danger" data-status="expired" bindtap="selectStatusFilter">
+        <view class="stat-num" style="color:#E5484D;">{{expiredCount}}</view>
+        <view class="text-muted">已过期</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分区横滑筛选 -->
+  <scroll-view class="zone-scroll" scroll-x="true">
+    <view class="zone-row">
+      <view
+        class="zone-pill {{activeZone === 'all' ? 'active' : ''}}"
+        data-zone="all"
+        bindtap="selectZone"
+      >
+        全部区域
+      </view>
+      <view
+        wx:for="{{zones}}"
+        wx:key="id"
+        class="zone-pill {{activeZone === item.id ? 'active' : ''}}"
+        data-zone="{{item.id}}"
+        bindtap="selectZone"
+      >
+        {{item.emoji}} {{item.name}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 状态提示 -->
+  <view wx:if="{{statusFilter !== 'all'}}" class="filter-tip row-between">
+    <text>当前仅看：{{statusFilter === 'soon' ? '3天内临期食材' : '已过期食材'}}</text>
+    <text class="reset-filter" data-status="all" bindtap="selectStatusFilter">查看全部</text>
+  </view>
+
+  <!-- 食材列表 -->
+  <view wx:if="{{filteredItems.length === 0}}" class="empty-box">
+    <text class="empty-emoji">🥬</text>
+    <view class="empty-title">该区域暂无食材</view>
+    <view class="empty-desc">点击右上角「+ 入库食材」，或在「去买菜」勾选已买一键入库</view>
+  </view>
+
+  <view wx:for="{{filteredItems}}" wx:key="id" class="card item-card">
+    <view class="row-between">
+      <view class="row-center flex-1" data-id="{{item.id}}" bindtap="openEditModal">
+        <text class="zone-emoji">{{item.zoneEmoji}}</text>
+        <view class="flex-1">
+          <view class="row-center">
+            <text class="item-name text-ellipsis">{{item.name}}</text>
+            <text class="badge {{item.expiry.status === 'expired' ? 'badge-danger' : (item.expiry.status === 'soon' ? 'badge-warn' : 'badge-green')}}" style="margin-left: 12rpx;">{{item.expiry.label}}</text>
+          </view>
+          <view class="text-muted" style="margin-top: 4rpx;">
+            {{item.zoneName}} · 到期 {{item.expireDate}} {{item.note ? '· ' + item.note : ''}}
+          </view>
+        </view>
+      </view>
+
+      <view class="qty-box row-center">
+        <view class="qty-btn" data-id="{{item.id}}" data-delta="-1" bindtap="onAdjustQty">-</view>
+        <view class="qty-text">{{item.qty}}{{item.unit}}</view>
+        <view class="qty-btn plus" data-id="{{item.id}}" data-delta="1" bindtap="onAdjustQty">+</view>
+      </view>
+    </view>
+
+    <view class="row-between item-foot">
+      <text class="text-muted" data-id="{{item.id}}" bindtap="openEditModal">点击编辑详情 / 修改保质期</text>
+      <text class="del-link" data-id="{{item.id}}" bindtap="onDeleteItem">移除</text>
+    </view>
+  </view>
+
+  <!-- 新增/编辑弹窗 -->
+  <view wx:if="{{showItemModal}}" class="modal-mask center" bindtap="closeItemModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="section-title">{{form.id ? '编辑食材' : '入库新食材'}}</view>
+
+      <view class="field-group">
+        <text class="form-label">食材名称 *</text>
+        <input class="form-input" placeholder="如：鸡中翅、西红柿、牛奶" value="{{form.name}}" data-field="name" bindinput="onFormInput" />
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">存放分区</text>
+        <view class="zone-pick-grid">
+          <view
+            wx:for="{{zones}}"
+            wx:key="id"
+            class="zone-pick-chip {{form.zone === item.id ? 'active' : ''}}"
+            data-zone="{{item.id}}"
+            bindtap="onSelectFormZone"
+          >
+            {{item.emoji}} {{item.name}}
+          </view>
+        </view>
+      </view>
+
+      <view class="row-between field-group" style="gap: 16rpx;">
+        <view class="flex-1">
+          <text class="form-label">数量</text>
+          <input class="form-input" type="digit" value="{{form.qty}}" data-field="qty" bindinput="onFormInput" />
+        </view>
+        <view class="flex-1">
+          <text class="form-label">单位</text>
+          <input class="form-input" placeholder="个/克/袋/瓶" value="{{form.unit}}" data-field="unit" bindinput="onFormInput" />
+        </view>
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">保质期至</text>
+        <picker mode="date" value="{{form.expireDate}}" bindchange="onExpireDateChange">
+          <view class="form-input row-between">
+            <text>{{form.expireDate}}</text>
+            <text class="text-muted">选择日期 ▾</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="field-group">
+        <text class="form-label">备注</text>
+        <input class="form-input" placeholder="如：买二送一、优先吃掉" value="{{form.note}}" data-field="note" bindinput="onFormInput" />
+      </view>
+
+      <view class="row-between" style="margin-top: 28rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeItemModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="saveFormItem">保存入库</view>
+      </view>
+    </view>
+  </view>
+</view>

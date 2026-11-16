@@ -1,0 +1,93 @@
+<view class="container">
+  <!-- 多厨房切换与主题设置 -->
+  <view class="card">
+    <view class="row-between" style="margin-bottom: 16rpx;">
+      <text class="section-title" style="margin-bottom: 0;">🏠 我的多个厨房</text>
+      <text class="add-link" bindtap="openCreateKitchen">+ 新建厨房</text>
+    </view>
+
+    <view wx:for="{{kitchens}}" wx:key="id" class="kitchen-row row-between">
+      <view class="row-center flex-1" data-id="{{item.id}}" bindtap="onSwitchKitchen">
+        <view class="theme-dot" style="background: {{item.theme.primary}};"></view>
+        <view class="flex-1">
+          <view class="row-center">
+            <text class="k-name">{{item.name}}</text>
+            <text wx:if="{{item.id === currentKitchen.id}}" class="badge badge-primary" style="margin-left: 10rpx;">当前使用</text>
+          </view>
+          <view class="text-muted text-ellipsis">{{item.notice}}</view>
+        </view>
+      </view>
+      <view class="row-center" style="gap: 12rpx; margin-left: 12rpx; flex-shrink: 0;">
+        <text class="edit-tag" data-id="{{item.id}}" bindtap="openEditKitchen">设置</text>
+        <text wx:if="{{kitchens.length > 1}}" class="del-tag" data-id="{{item.id}}" bindtap="onDeleteKitchen">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 当前厨房菜品分类管理 -->
+  <view class="card">
+    <view class="row-between" style="margin-bottom: 16rpx;">
+      <text class="section-title flex-1 text-ellipsis" style="margin-bottom: 0;">📑 「{{currentKitchen.name}}」分类管理</text>
+      <text class="add-link" bindtap="openAddCategory">+ 新增分类</text>
+    </view>
+
+    <view wx:for="{{categories}}" wx:key="id" class="cat-row row-between">
+      <view class="row-center flex-1">
+        <text class="cat-order">{{index + 1}}</text>
+        <text class="cat-name text-ellipsis">{{item.name}}</text>
+      </view>
+      <view class="row-center" style="gap: 14rpx; flex-shrink: 0; margin-left: 12rpx;">
+        <text class="sort-btn" data-id="{{item.id}}" data-dir="up" bindtap="onMoveCategory">↑</text>
+        <text class="sort-btn" data-id="{{item.id}}" data-dir="down" bindtap="onMoveCategory">↓</text>
+        <text class="edit-tag" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="openRenameCategory">改名</text>
+        <text wx:if="{{categories.length > 1}}" class="del-tag" data-id="{{item.id}}" bindtap="onDeleteCategory">删</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 厨房编辑/新建弹窗 -->
+  <view wx:if="{{showKitchenModal}}" class="modal-mask center" bindtap="closeKitchenModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="section-title">{{kitchenForm.id ? '厨房主题与公告设置' : '新建私房厨房'}}</view>
+      <view class="field-group">
+        <text class="form-label">厨房名称 *</text>
+        <input class="form-input" placeholder="如：周末烧烤摊、宝宝辅食屋" value="{{kitchenForm.name}}" data-field="name" bindinput="onKitchenInput" />
+      </view>
+      <view class="field-group">
+        <text class="form-label">店招公告</text>
+        <textarea class="form-textarea" style="min-height: 120rpx;" value="{{kitchenForm.notice}}" data-field="notice" bindinput="onKitchenInput" />
+      </view>
+      <view class="field-group">
+        <text class="form-label">主题配色</text>
+        <view class="theme-grid">
+          <view
+            wx:for="{{themes}}"
+            wx:key="id"
+            class="theme-card {{kitchenForm.themeId === item.id ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="selectKitchenTheme"
+          >
+            <view class="theme-swatch" style="background: {{item.gradient}};"></view>
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="row-between" style="margin-top: 24rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeKitchenModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="saveKitchenForm">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类编辑弹窗 -->
+  <view wx:if="{{showCatModal}}" class="modal-mask center" bindtap="closeCatModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="section-title">{{catForm.id ? '重命名分类' : '新增菜品分类'}}</view>
+      <input class="form-input" placeholder="如：硬核硬菜、下酒凉菜" value="{{catForm.name}}" bindinput="onCatNameInput" />
+      <view class="row-between" style="margin-top: 24rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeCatModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="saveCatForm">确认</view>
+      </view>
+    </view>
+  </view>
+</view>

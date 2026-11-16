@@ -1,0 +1,68 @@
+.dish-item {
+  padding: 16rpx 0;
+  border-bottom: 1rpx dashed #EFECE6;
+}
+
+.dish-item:last-child {
+  border-bottom: none;
+}
+
+.dish-emoji {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.dish-name {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.dish-qty {
+  font-weight: 700;
+  color: #FF6B35;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.field-group {
+  margin-bottom: 18rpx;
+}
+
+.meal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.meal-chip {
+  width: 47%;
+  padding: 16rpx;
+  border-radius: 16rpx;
+  background-color: #F7F6F2;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #4B5563;
+  border: 2rpx solid transparent;
+}
+
+.meal-chip.active {
+  background-color: #FFF0E8;
+  color: #FF6B35;
+  border-color: #FF6B35;
+}
+
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.q-tag {
+  padding: 8rpx 18rpx;
+  border-radius: 999rpx;
+  background-color: #F3F4F6;
+  color: #4B5563;
+  font-size: 23rpx;
+}

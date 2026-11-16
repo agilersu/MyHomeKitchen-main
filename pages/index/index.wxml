@@ -1,0 +1,195 @@
+<view class="index-page">
+  <!-- 顶部厨房店招 -->
+  <view class="kitchen-banner" style="background: {{kitchen.theme.gradient}};">
+    <view class="row-between">
+      <view class="row-center flex-1" bindtap="goCategoryManage">
+        <image class="kitchen-logo" src="/static/logo.png" mode="aspectFill" />
+        <view class="flex-1">
+          <view class="row-center">
+            <text class="kitchen-name text-ellipsis">{{kitchen.name}}</text>
+            <text class="switch-pill">切换 ▾</text>
+          </view>
+          <text class="kitchen-notice text-ellipsis">{{kitchen.notice}}</text>
+        </view>
+      </view>
+      <view class="add-recipe-btn" bindtap="goAddRecipe">+ 添菜谱</view>
+    </view>
+  </view>
+
+  <!-- 四大本地实用入口 -->
+  <view class="quick-grid">
+    <view class="quick-item" bindtap="goRandomDish">
+      <view class="quick-icon-wrap" style="background: #FFF0E8;">
+        <image class="quick-icon" src="/static/food.svg" mode="aspectFit" />
+      </view>
+      <text class="quick-label">随机点菜</text>
+    </view>
+    <view class="quick-item" bindtap="goMealPlan">
+      <view class="quick-icon-wrap" style="background: #E8F8F0;">
+        <image class="quick-icon" src="/static/jihua.svg" mode="aspectFit" />
+      </view>
+      <text class="quick-label">饮食计划</text>
+    </view>
+    <view class="quick-item" bindtap="goShoppingList">
+      <view class="quick-icon-wrap" style="background: #FFF5E5;">
+        <image class="quick-icon" src="/static/shopping.svg" mode="aspectFit" />
+      </view>
+      <text class="quick-label">去买菜</text>
+    </view>
+    <view class="quick-item" bindtap="goTimers">
+      <view class="quick-icon-wrap" style="background: #EEF2FF;">
+        <image class="quick-icon" src="/static/chuwu.svg" mode="aspectFit" />
+      </view>
+      <text class="quick-label">做菜计时</text>
+    </view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar row-between">
+    <view class="search-input-wrap row-center flex-1">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input flex-1"
+        placeholder="搜菜名、食材（如：鸡翅、番茄）"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+      />
+      <text wx:if="{{searchKeyword}}" class="clear-search" bindtap="clearSearch">✕</text>
+    </view>
+    <view class="manage-cat-btn" bindtap="goCategoryManage">分类管理</view>
+  </view>
+
+  <!-- 点餐双栏主体 -->
+  <view class="menu-body">
+    <scroll-view class="cat-sidebar" scroll-y="true">
+      <view
+        class="cat-item {{activeCategoryId === 'all' ? 'active' : ''}}"
+        style="{{activeCategoryId === 'all' ? 'color:' + kitchen.theme.primary + ';border-left-color:' + kitchen.theme.primary : ''}}"
+        data-id="all"
+        bindtap="selectCategory"
+      >
+        <text class="flex-1 text-ellipsis">全部菜品</text>
+        <text class="cat-count">{{allRecipesCount}}</text>
+      </view>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        class="cat-item {{activeCategoryId === item.id ? 'active' : ''}}"
+        style="{{activeCategoryId === item.id ? 'color:' + kitchen.theme.primary + ';border-left-color:' + kitchen.theme.primary : ''}}"
+        data-id="{{item.id}}"
+        bindtap="selectCategory"
+      >
+        <text class="flex-1 text-ellipsis">{{item.name}}</text>
+        <text class="cat-count">{{item.count}}</text>
+      </view>
+    </scroll-view>
+
+    <scroll-view class="recipe-list" scroll-y="true">
+      <view wx:if="{{filteredRecipes.length === 0}}" class="empty-box">
+        <text class="empty-emoji">🍳</text>
+        <view class="empty-title">暂无符合条件的菜谱</view>
+        <view class="empty-desc">点击右上角「+ 添菜谱」或支持粘贴小红书文本导入</view>
+      </view>
+
+      <view
+        wx:for="{{filteredRecipes}}"
+        wx:key="id"
+        class="recipe-card"
+        data-id="{{item.id}}"
+        bindtap="openDetail"
+      >
+        <view class="recipe-thumb" style="background-color: {{item.coverBg}};">
+          <image wx:if="{{item.coverImage}}" class="recipe-img" src="{{item.coverImage}}" mode="aspectFill" />
+          <text wx:else class="recipe-emoji">{{item.emoji}}</text>
+        </view>
+
+        <view class="recipe-info flex-1">
+          <view class="recipe-title text-ellipsis">{{item.name}}</view>
+          <view class="recipe-desc text-ellipsis">{{item.description || '家常好味道'}}</view>
+          <view class="recipe-meta row-center">
+            <text class="meta-tag">⏱ {{item.cookTime}}分</text>
+            <text class="meta-tag">做过{{item.cookCount || 0}}次</text>
+            <text class="stock-tag {{item.stock.allReady ? 'ok' : 'miss'}}">{{item.stock.ratioText}}</text>
+          </view>
+          <view class="row-between recipe-bottom">
+            <text class="spec-hint">{{item.specs.length > 1 ? item.specs.length + '种口味可选' : item.specs[0]}}</text>
+            <view
+              class="add-cart-btn"
+              style="background: {{kitchen.theme.primary}};"
+              data-id="{{item.id}}"
+              catchtap="onQuickAdd"
+            >
+              {{item.specs.length > 1 ? '选规格' : '+ 点菜'}}
+            </view>
+          </view>
+        </view>
+      </view>
+      <view style="height: {{cartTotalCount > 0 ? '140rpx' : '24rpx'}};"></view>
+    </scroll-view>
+  </view>
+
+  <!-- 底部悬浮菜篮栏 -->
+  <view wx:if="{{cartTotalCount > 0}}" class="cart-bar row-between">
+    <view class="row-center flex-1" bindtap="toggleCartDrawer">
+      <view class="cart-badge-wrap" style="background: {{kitchen.theme.primary}};">
+        <text class="cart-emoji">🧺</text>
+        <text class="cart-count-badge">{{cartTotalCount}}</text>
+      </view>
+      <view class="cart-text-wrap flex-1">
+        <view class="cart-title text-ellipsis">已点 {{cartTotalCount}} 道菜</view>
+        <view class="cart-sub text-ellipsis">预计耗时约 {{cartTotalMinutes}} 分钟（点击看明细）</view>
+      </view>
+    </view>
+    <view class="cart-submit-btn" style="background: {{kitchen.theme.gradient}};" bindtap="goSubmitOrder">
+      去下单
+    </view>
+  </view>
+
+  <!-- 菜篮抽屉弹窗 -->
+  <view wx:if="{{showCartDrawer}}" class="modal-mask" bindtap="closeCartDrawer">
+    <view class="modal-sheet" catchtap="noop">
+      <view class="row-between drawer-header">
+        <text class="section-title" style="margin-bottom:0;">已点菜篮 ({{cartTotalCount}})</text>
+        <text class="clear-btn" bindtap="onClearCart">清空菜篮</text>
+      </view>
+      <view wx:for="{{cart}}" wx:key="cartItemId" class="cart-row row-between">
+        <view class="flex-1">
+          <view class="cart-item-name">{{item.emoji}} {{item.name}}</view>
+          <view class="text-muted">口味：{{item.spec}} · 约{{item.cookTime}}分钟</view>
+        </view>
+        <view class="qty-ctrl row-center">
+          <view class="qty-btn" data-id="{{item.cartItemId}}" data-delta="-1" bindtap="onChangeCartQty">-</view>
+          <text class="qty-val">{{item.qty}}</text>
+          <view class="qty-btn plus" style="background:{{kitchen.theme.primary}};" data-id="{{item.cartItemId}}" data-delta="1" bindtap="onChangeCartQty">+</view>
+        </view>
+      </view>
+      <view class="btn-primary" style="margin-top:24rpx;background:{{kitchen.theme.gradient}};" bindtap="goSubmitOrder">
+        确认菜品，去提交订单
+      </view>
+    </view>
+  </view>
+
+  <!-- 选规格弹窗 -->
+  <view wx:if="{{showSpecModal && specRecipe}}" class="modal-mask center" bindtap="closeSpecModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="spec-modal-title">{{specRecipe.emoji}} {{specRecipe.name}}</view>
+      <view class="text-muted" style="margin-bottom: 20rpx;">请选择喜欢的做法/口味规格</view>
+      <view class="spec-grid">
+        <view
+          wx:for="{{specRecipe.specs}}"
+          wx:key="*this"
+          class="spec-chip {{selectedSpec === item ? 'selected' : ''}}"
+          style="{{selectedSpec === item ? 'border-color:' + kitchen.theme.primary + ';color:' + kitchen.theme.primary + ';background:' + kitchen.theme.softBg : ''}}"
+          data-spec="{{item}}"
+          bindtap="selectSpecOption"
+        >
+          {{item}}
+        </view>
+      </view>
+      <view class="row-between" style="margin-top: 32rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeSpecModal">取消</view>
+        <view class="btn-primary flex-1" style="background:{{kitchen.theme.gradient}};" bindtap="confirmAddSpec">加入菜篮</view>
+      </view>
+    </view>
+  </view>
+</view>

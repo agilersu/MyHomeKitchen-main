@@ -1,0 +1,84 @@
+<view class="container" wx:if="{{recipe}}">
+  <!-- 顶部封面 -->
+  <view class="cover-box" style="background-color: {{recipe.coverBg}};">
+    <image wx:if="{{recipe.coverImage}}" class="cover-img" src="{{recipe.coverImage}}" mode="aspectFill" />
+    <text wx:else class="cover-emoji">{{recipe.emoji}}</text>
+  </view>
+
+  <!-- 菜品简介 -->
+  <view class="card">
+    <view class="row-between">
+      <view class="dish-title">{{recipe.name}}</view>
+      <text class="badge {{stock.allReady ? 'badge-green' : 'badge-warn'}}">{{stock.ratioText}}</text>
+    </view>
+    <view class="dish-desc">{{recipe.description || '用心烹制每一道家常菜'}}</view>
+    <view class="meta-bar row-center">
+      <text class="meta-pill">⏱ 约 {{recipe.cookTime}} 分钟</text>
+      <text class="meta-pill">🔥 难度：{{recipe.difficulty}}</text>
+      <text class="meta-pill">👨‍🍳 做过 {{recipe.cookCount || 0}} 次</text>
+    </view>
+
+    <!-- 规格选择 -->
+    <view class="spec-section">
+      <text class="form-label">选择口味/规格</text>
+      <view class="spec-row">
+        <view
+          wx:for="{{recipe.specs}}"
+          wx:key="*this"
+          class="spec-tag {{selectedSpec === item ? 'active' : ''}}"
+          data-spec="{{item}}"
+          bindtap="selectSpec"
+        >
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用料与冰箱库存核对 -->
+  <view class="card">
+    <view class="row-between" style="margin-bottom: 16rpx;">
+      <text class="section-title" style="margin-bottom: 0;">🥬 所需用料 ({{stock.availableCount}}/{{stock.total}} 齐备)</text>
+      <text wx:if="{{stock.missingCount > 0}}" class="add-missing-btn" bindtap="onAddMissingToShopping">+ 缺货加买菜清单</text>
+    </view>
+    <view wx:if="{{stock.details.length === 0}}" class="text-muted">暂无填写食材明细</view>
+    <view wx:for="{{stock.details}}" wx:key="name" class="ing-row row-between">
+      <view class="row-center">
+        <text class="ing-dot {{item.inFridge ? 'ok' : 'miss'}}"></text>
+        <text class="ing-name">{{item.name}}</text>
+      </view>
+      <view class="row-center">
+        <text class="ing-amt">{{item.amount}}{{item.unit}}</text>
+        <text class="ing-stock {{item.inFridge ? 'ok' : 'miss'}}">{{item.inFridge ? '冰箱有(' + item.fridgeQtyText + ')' : '缺货'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分步做法 + 智能识别分钟数启动计时器 -->
+  <view class="card">
+    <view class="section-title">👩‍🍳 详细烹饪步骤</view>
+    <view wx:if="{{stepItems.length === 0}}" class="text-muted">暂无填写步骤</view>
+    <view wx:for="{{stepItems}}" wx:key="index" class="step-card">
+      <view class="row-between">
+        <text class="step-num">第 {{index + 1}} 步</text>
+        <view
+          wx:if="{{item.minutes > 0}}"
+          class="step-timer-btn"
+          data-minutes="{{item.minutes}}"
+          data-step="{{index + 1}}"
+          bindtap="startStepTimer"
+        >
+          ⏱ 定时 {{item.minutes}} 分钟
+        </view>
+      </view>
+      <view class="step-text">{{item.text}}</view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="detail-footer row-between">
+    <view class="footer-icon-btn" bindtap="onEdit">✏️ 编辑</view>
+    <view class="footer-icon-btn danger" bindtap="onDelete">🗑 删除</view>
+    <view class="btn-primary flex-1" bindtap="onAddToCart">加入菜篮 ({{selectedSpec}})</view>
+  </view>
+</view>

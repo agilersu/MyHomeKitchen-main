@@ -1,0 +1,226 @@
+<view class="container">
+  <!-- 顶部买菜与计划联动卡 -->
+  <view class="card hero-card">
+    <view class="row-between">
+      <view class="flex-1">
+        <view class="hero-title">厨房备餐台</view>
+        <view class="text-muted">当前共有 {{pendingCount}} 笔待做订单，{{completedCount}} 份美食打卡</view>
+      </view>
+      <view class="btn-secondary" bindtap="goTimers">⏱ 做菜计时</view>
+    </view>
+    <view class="action-pair row-between">
+      <view class="pair-btn" style="background: #FFF5E5; color: #D97706;" bindtap="goShopping">
+        <image class="pair-icon" src="/static/shopping.svg" mode="aspectFit" />
+        <text>去买菜清单</text>
+      </view>
+      <view class="pair-btn" style="background: #E8F8F0; color: #22A06B;" bindtap="goMealPlan">
+        <image class="pair-icon" src="/static/jihua.svg" mode="aspectFit" />
+        <text>三餐饮食计划</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 状态切换 Tab -->
+  <view class="seg-tabs row-between">
+    <view
+      class="seg-tab {{activeTab === 'pending' ? 'active' : ''}}"
+      data-tab="pending"
+      bindtap="switchTab"
+    >
+      待做订单 ({{pendingCount}})
+    </view>
+    <view
+      class="seg-tab {{activeTab === 'completed' ? 'active' : ''}}"
+      data-tab="completed"
+      bindtap="switchTab"
+    >
+      已完成 · 作品墙 ({{completedCount}})
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view wx:if="{{displayOrders.length === 0}}" class="empty-box">
+    <text class="empty-emoji">{{activeTab === 'pending' ? '🍽️' : '📸'}}</text>
+    <view class="empty-title">{{activeTab === 'pending' ? '暂时没有待做订单' : '还没有完成的美食作品'}}</view>
+    <view class="empty-desc">去「厨房」选几道拿手好菜下单吧</view>
+  </view>
+
+  <view wx:for="{{displayOrders}}" wx:key="id" class="card order-card">
+    <view class="row-between order-head">
+      <view class="row-center flex-1">
+        <text class="meal-chip">{{item.mealEmoji}} {{item.mealDate}} {{item.mealLabel}}</text>
+        <text class="kitchen-tag">{{item.kitchenName}}</text>
+      </view>
+      <text class="badge {{item.status === 'pending' ? 'badge-primary' : 'badge-green'}}">{{item.status === 'pending' ? '待下厨' : '已完成'}}</text>
+    </view>
+
+    <view class="orderer-row row-between">
+      <text class="text-muted">点单人：{{item.ordererName}}</text>
+      <text class="text-muted">{{item.createdAt}}</text>
+    </view>
+
+    <view wx:if="{{item.remark}}" class="remark-box">
+      💬 备注：{{item.remark}}
+    </view>
+
+    <!-- 菜品明细 -->
+    <view class="dish-list">
+      <view
+        wx:for="{{item.items}}"
+        wx:for-item="dish"
+        wx:key="recipeId"
+        class="dish-row row-between"
+        data-id="{{dish.recipeId}}"
+        bindtap="openRecipeDetail"
+      >
+        <view class="row-center flex-1">
+          <text class="dish-emoji">{{dish.emoji || '🍲'}}</text>
+          <view class="flex-1">
+            <view class="dish-name">{{dish.name}}</view>
+            <view class="text-muted">{{dish.spec}} · 约{{dish.cookTime || 15}}分</view>
+          </view>
+        </view>
+        <text class="dish-qty">× {{dish.qty}}</text>
+      </view>
+    </view>
+
+    <!-- 已完成作品展示 -->
+    <view wx:if="{{item.status === 'completed'}}" class="work-box">
+      <image wx:if="{{item.workImage}}" class="work-img" src="{{item.workImage}}" mode="aspectFill" bindtap="previewWorkImage" data-src="{{item.workImage}}" />
+      <view class="work-note">📝 厨神心得：{{item.workNote}}</view>
+      <view class="text-muted" style="margin-top:6rpx;">完成于 {{item.completedAt}}</view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="order-actions row-between">
+      <view class="btn-ghost action-btn" data-id="{{item.id}}" bindtap="onDeleteOrder">删除</view>
+      <view wx:if="{{item.status === 'pending'}}" class="btn-share action-btn" data-id="{{item.id}}" bindtap="openShareSelectModal">分享微信</view>
+      <view wx:if="{{item.status === 'pending'}}" class="btn-secondary action-btn" bindtap="goShopping">核对买菜</view>
+      <view wx:if="{{item.status === 'pending'}}" class="btn-primary action-btn" data-id="{{item.id}}" bindtap="openCompleteModal">完成做菜打卡</view>
+    </view>
+  </view>
+
+  <!-- 完成打卡弹窗 -->
+  <view wx:if="{{showCompleteModal}}" class="modal-mask center" bindtap="closeCompleteModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="section-title">📸 完成做菜 · 美食打卡</view>
+      <view class="upload-box" bindtap="chooseWorkPhoto">
+        <image wx:if="{{workImage}}" class="preview-work-img" src="{{workImage}}" mode="aspectFill" />
+        <view wx:else class="upload-placeholder">
+          <text style="font-size: 48rpx;">📷</text>
+          <view class="text-muted">点击上传成品照片（纯本地保存，可选）</view>
+        </view>
+      </view>
+
+      <view style="margin-top: 20rpx;">
+        <text class="form-label">下厨心得 / 吃货评价</text>
+        <textarea
+          class="form-textarea"
+          placeholder="记录本次火候、调味调整或家人反馈~"
+          value="{{workNote}}"
+          bindinput="onWorkNoteInput"
+        />
+      </view>
+
+      <view class="row-between deduct-row" bindtap="toggleDeductFridge">
+        <text>自动扣减冰箱中同名同单位食材</text>
+        <switch checked="{{deductFridge}}" color="#FF6B35" bindchange="onDeductSwitchChange" catchtap="noop" />
+      </view>
+
+      <view class="row-between" style="margin-top: 28rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeCompleteModal">取消</view>
+        <view class="btn-primary flex-1" bindtap="confirmCompleteOrder">确认打卡</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收到微信分享订单弹窗 -->
+  <view wx:if="{{showSharedModal && sharedOrder}}" class="modal-mask center" bindtap="closeSharedModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="row-between" style="margin-bottom: 12rpx;">
+        <view class="section-title" style="margin-bottom: 0;">📩 收到好友分享的待做订单</view>
+        <text class="badge badge-primary">待下厨</text>
+      </view>
+
+      <view class="shared-meta">
+        <view class="meal-chip">{{sharedOrder.mealEmoji}} {{sharedOrder.mealDate}} {{sharedOrder.mealLabel}}</view>
+        <view class="text-muted" style="margin-top: 6rpx;">
+          点单人：{{sharedOrder.ordererName}} · {{sharedOrder.kitchenName}}
+        </view>
+        <view wx:if="{{sharedOrder.remark}}" class="remark-box">
+          💬 备注：{{sharedOrder.remark}}
+        </view>
+      </view>
+
+      <view class="dish-list shared-dish-list">
+        <view
+          wx:for="{{sharedOrder.items}}"
+          wx:key="index"
+          class="dish-row row-between"
+        >
+          <view class="row-center flex-1">
+            <text class="dish-emoji">{{item.emoji || '🍲'}}</text>
+            <view>
+              <view class="dish-name">{{item.name}}</view>
+              <view class="text-muted">{{item.spec ? item.spec + ' · ' : ''}}约{{item.cookTime || 15}}分</view>
+            </view>
+          </view>
+          <text class="dish-qty">× {{item.qty}}</text>
+        </view>
+      </view>
+
+      <view class="row-between" style="margin-top: 28rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeSharedModal">暂不加入</view>
+        <view class="btn-primary flex-1" bindtap="confirmImportSharedOrder">加入我的待做订单</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 多选菜品分享弹窗 -->
+  <view wx:if="{{showShareSelectModal}}" class="modal-mask center" bindtap="closeShareSelectModal">
+    <view class="modal-dialog" catchtap="noop">
+      <view class="row-between" style="margin-bottom: 12rpx;">
+        <view class="section-title" style="margin-bottom: 0;">📤 选择要分享的菜品</view>
+        <view class="share-select-all" bindtap="toggleSelectAllShareDishes">
+          {{shareAllSelected ? '取消全选' : '全选'}} ({{shareSelectedCount}}/{{shareDishOptions.length}})
+        </view>
+      </view>
+      <view class="text-muted" style="margin-bottom: 14rpx;">勾选多道菜品，可一块分享给微信好友</view>
+
+      <view class="dish-list shared-dish-list">
+        <view
+          wx:for="{{shareDishOptions}}"
+          wx:key="uid"
+          class="dish-row row-between"
+          data-uid="{{item.uid}}"
+          bindtap="toggleShareDishItem"
+        >
+          <view class="row-center flex-1">
+            <view class="share-check-box {{item.checked ? 'checked' : ''}}">
+              <text wx:if="{{item.checked}}">✓</text>
+            </view>
+            <text class="dish-emoji">{{item.emoji || '🍲'}}</text>
+            <view class="flex-1">
+              <view class="dish-name text-ellipsis">{{item.name}}</view>
+              <view class="text-muted text-ellipsis">{{item.spec ? item.spec + ' · ' : ''}}{{item.mealHint}}</view>
+            </view>
+          </view>
+          <text class="dish-qty">× {{item.qty}}</text>
+        </view>
+      </view>
+
+      <view class="row-between" style="margin-top: 28rpx; gap: 20rpx;">
+        <view class="btn-ghost flex-1" bindtap="closeShareSelectModal">取消</view>
+        <button
+          wx:if="{{shareSelectedCount > 0}}"
+          class="btn-share flex-1 share-confirm-btn"
+          open-type="share"
+          data-mode="custom"
+        >
+          确认分享 ({{shareSelectedCount}}道)
+        </button>
+        <view wx:else class="btn-ghost flex-1" bindtap="onEmptyShareTap">请至少选1道菜</view>
+      </view>
+    </view>
+  </view>
+</view>

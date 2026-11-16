@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/cook/index",
+    "pages/storageSpace/index",
+    "pages/my/index",
+    "pages/cookbookDetails/index",
+    "pages/addCookbook/index",
+    "pages/categoryManagement/index",
+    "pages/submitOrder/index",
+    "pages/randomDish/index",
+    "pages/vegetableBasket/index",
+    "pages/mealPlan/index",
+    "pages/timerManagement/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "苏厨神与吃货",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F6F2"
+  },
+  "tabBar": {
+    "color": "#7F8596",
+    "selectedColor": "#FF6B35",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "厨房",
+        "iconPath": "static/index.png",
+        "selectedIconPath": "static/index_hover.png"
+      },
+      {
+        "pagePath": "pages/cook/index",
+        "text": "订单",
+        "iconPath": "static/order.png",
+        "selectedIconPath": "static/order_hover.png"
+      },
+      {
+        "pagePath": "pages/storageSpace/index",
+        "text": "冰箱",
+        "iconPath": "static/fridge.png",
+        "selectedIconPath": "static/fridge_hover.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "苏大厨",
+        "iconPath": "static/my.png",
+        "selectedIconPath": "static/my_hover.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

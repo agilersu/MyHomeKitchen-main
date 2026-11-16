@@ -1,0 +1,84 @@
+<view class="container">
+  <!-- 已选菜品 -->
+  <view class="card">
+    <view class="row-between" style="margin-bottom: 14rpx;">
+      <text class="section-title" style="margin-bottom: 0;">🍽️ 本单菜品 ({{totalCount}}道)</text>
+      <text class="text-muted">{{kitchen.name}}</text>
+    </view>
+    <view wx:if="{{cart.length === 0}}" class="empty-box" style="padding: 40rpx 0;">
+      <view class="empty-desc">菜篮是空的，请先回厨房点菜</view>
+    </view>
+    <view wx:for="{{cart}}" wx:key="cartItemId" class="dish-item row-between">
+      <view class="row-center flex-1">
+        <text class="dish-emoji">{{item.emoji}}</text>
+        <view class="flex-1">
+          <view class="dish-name text-ellipsis">{{item.name}}</view>
+          <view class="text-muted">口味：{{item.spec}} · 约{{item.cookTime}}分</view>
+        </view>
+      </view>
+      <text class="dish-qty">× {{item.qty}}</text>
+    </view>
+  </view>
+
+  <!-- 用餐时间与餐次 -->
+  <view class="card">
+    <view class="section-title">📅 用餐安排</view>
+    <view class="field-group">
+      <text class="form-label">计划日期</text>
+      <picker mode="date" value="{{mealDate}}" bindchange="onDateChange">
+        <view class="form-input row-between">
+          <text>{{mealDate}}</text>
+          <text class="text-muted">选择日期 ▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="field-group">
+      <text class="form-label">餐次</text>
+      <view class="meal-grid">
+        <view
+          wx:for="{{mealTypes}}"
+          wx:key="id"
+          class="meal-chip {{mealType === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="selectMealType"
+        >
+          <text>{{item.emoji}} {{item.name}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 点单人与忌口备注 -->
+  <view class="card">
+    <view class="section-title">💬 点单信息与忌口</view>
+    <view class="field-group">
+      <text class="form-label">点单人（吃货称呼）</text>
+      <input class="form-input" placeholder="如：吃货小宝、爸爸" value="{{ordererName}}" bindinput="onOrdererInput" />
+    </view>
+
+    <view class="field-group">
+      <text class="form-label">快捷备注标签</text>
+      <view class="quick-tags">
+        <view
+          wx:for="{{quickRemarks}}"
+          wx:key="*this"
+          class="q-tag"
+          data-tag="{{item}}"
+          bindtap="appendRemarkTag"
+        >
+          + {{item}}
+        </view>
+      </view>
+    </view>
+
+    <view class="field-group">
+      <text class="form-label">具体叮嘱</text>
+      <textarea class="form-textarea" placeholder="给大厨留句话，如：少辣、多放葱花、18:30开饭~" value="{{remark}}" bindinput="onRemarkInput" />
+    </view>
+  </view>
+
+  <view class="btn-primary" style="background: {{kitchen.theme.gradient}};" bindtap="onSubmitOrder">
+    🚀 确认下单给大厨
+  </view>
+</view>

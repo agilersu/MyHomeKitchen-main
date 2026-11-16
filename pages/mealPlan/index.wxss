@@ -1,0 +1,116 @@
+.cal-card {
+  padding-bottom: 20rpx;
+}
+
+.day-strip {
+  display: inline-flex;
+  gap: 14rpx;
+}
+
+.day-pill {
+  width: 96rpx;
+  padding: 16rpx 0;
+  border-radius: 20rpx;
+  background-color: #F7F6F2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.day-pill.active {
+  background-color: #FF6B35;
+  color: #FFFFFF;
+}
+
+.day-week {
+  font-size: 21rpx;
+  opacity: 0.8;
+}
+
+.day-num {
+  font-size: 32rpx;
+  font-weight: 800;
+  margin-top: 4rpx;
+}
+
+.day-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background-color: #22A06B;
+  margin-top: 6rpx;
+}
+
+.day-pill.active .day-dot {
+  background-color: #FFFFFF;
+}
+
+.meal-header {
+  padding-bottom: 14rpx;
+  border-bottom: 1rpx solid #F3F4F6;
+}
+
+.meal-svg {
+  width: 34rpx;
+  height: 34rpx;
+  margin-right: 12rpx;
+}
+
+.meal-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.add-dish-btn {
+  font-size: 24rpx;
+  color: #FF6B35;
+  font-weight: 700;
+  background-color: #FFF0E8;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+.meal-empty {
+  padding: 24rpx 0 8rpx;
+  font-size: 24rpx;
+  color: #9CA3AF;
+}
+
+.plan-dish {
+  padding: 16rpx 0;
+  border-bottom: 1rpx dashed #EFECE6;
+}
+
+.plan-dish:last-child {
+  border-bottom: none;
+}
+
+.dish-emoji {
+  font-size: 38rpx;
+  margin-right: 14rpx;
+}
+
+.dish-name {
+  font-size: 27rpx;
+  font-weight: 600;
+}
+
+.rm-dish {
+  font-size: 23rpx;
+  color: #EF4444;
+  padding: 6rpx 12rpx;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.pick-recipe-row {
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #F3F4F6;
+}
+
+.pick-recipe-row .badge {
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}

@@ -1,0 +1,90 @@
+.hero-title {
+  font-size: 36rpx;
+  font-weight: 800;
+  margin-bottom: 6rpx;
+}
+
+.field-block {
+  margin-top: 24rpx;
+}
+
+.count-row {
+  display: flex;
+  gap: 14rpx;
+}
+
+.count-chip {
+  flex: 1;
+  text-align: center;
+  padding: 14rpx 0;
+  border-radius: 16rpx;
+  background-color: #F7F6F2;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: #4B5563;
+}
+
+.count-chip.active {
+  background-color: #2B2D42;
+  color: #FFFFFF;
+}
+
+.cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.cat-chip {
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  background-color: #F7F6F2;
+  font-size: 24rpx;
+  color: #4B5563;
+}
+
+.cat-chip.active {
+  background-color: #FFF0E8;
+  color: #FF6B35;
+  font-weight: 700;
+}
+
+.spin-btn {
+  margin-top: 28rpx;
+}
+
+.picked-row {
+  padding: 16rpx 0;
+  border-bottom: 1rpx dashed #EFECE6;
+}
+
+.picked-row:last-child {
+  border-bottom: none;
+}
+
+.picked-thumb {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18rpx;
+  flex-shrink: 0;
+}
+
+.picked-name {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.swap-btn {
+  font-size: 23rpx;
+  background-color: #F3F4F6;
+  color: #374151;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
