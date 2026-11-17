@@ -46,7 +46,7 @@
       },
       {
         "pagePath": "pages/my/index",
-        "text": "苏大厨",
+        "text": "苏大厨 ",
         "iconPath": "static/my.png",
         "selectedIconPath": "static/my_hover.png"
       }
